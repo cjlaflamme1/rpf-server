@@ -10,7 +10,7 @@ import { AppService } from './app.service';
       host: 'localhost',
       port: 3306,
       username: 'root',
-      password: 'root',
+      password: 'rootroot',
       database: 'test',
       entities: [],
       synchronize: true, // SET TO FALSE, before production after migration integrations.
