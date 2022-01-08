@@ -18,12 +18,7 @@ import { ClimberProfileModule } from './climber-profile/climber-profile.module';
       password: process.env.DB_PASSWORD,
       database: process.env.DB_NAME,
       entities: ['dist/**/*.entity{.ts,.js}'],
-      synchronize: false,
-      migrationsTableName: 'migrations',
-      migrations: ['dist/src/migrations/*{.ts,.js}'],
-      cli: {
-        migrationsDir: 'src/migrations',
-      },
+      synchronize: true,
     }),
     UserModule,
     AuthModule,
