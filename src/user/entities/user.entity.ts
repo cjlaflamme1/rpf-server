@@ -17,7 +17,9 @@ export class User {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @OneToOne(() => ClimberProfile, (climberProfile) => climberProfile.climber)
+  @OneToOne(() => ClimberProfile, (climberProfile) => climberProfile.climber, {
+    cascade: true,
+  })
   climbingProfile: ClimberProfile;
 
   @Column()
