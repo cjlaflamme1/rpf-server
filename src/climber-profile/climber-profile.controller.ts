@@ -1,9 +1,20 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  UseGuards,
+} from '@nestjs/common';
+import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { ClimberProfileService } from './climber-profile.service';
 import { CreateClimberProfileDto } from './dto/create-climber-profile.dto';
 import { UpdateClimberProfileDto } from './dto/update-climber-profile.dto';
 
 @Controller('climber-profile')
+@UseGuards(JwtAuthGuard)
 export class ClimberProfileController {
   constructor(private readonly climberProfileService: ClimberProfileService) {}
 
@@ -23,7 +34,10 @@ export class ClimberProfileController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateClimberProfileDto: UpdateClimberProfileDto) {
+  update(
+    @Param('id') id: string,
+    @Body() updateClimberProfileDto: UpdateClimberProfileDto,
+  ) {
     return this.climberProfileService.update(+id, updateClimberProfileDto);
   }
 
