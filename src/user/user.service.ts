@@ -14,10 +14,11 @@ export class UserService {
     private usersRepository: Repository<User>,
   ) {}
   async create(createUserDto: CreateUserDto) {
-    return this.usersRepository.save({
-      password: await bcrypt.hash(createUserDto.password, saltOrRounds),
-      ...createUserDto,
-    });
+    createUserDto.password = await bcrypt.hash(
+      createUserDto.password,
+      saltOrRounds,
+    );
+    return this.usersRepository.save(createUserDto);
   }
 
   findAll() {

@@ -1,8 +1,9 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
 import { UserService } from 'src/user/user.service';
 import { JwtService } from '@nestjs/jwt';
 import { CreateUserDto } from 'src/user/dto/create-user.dto';
+import { User } from 'src/user/entities/user.entity';
 
 @Injectable()
 export class AuthService {
@@ -10,10 +11,14 @@ export class AuthService {
     private userService: UserService,
     private jwtService: JwtService,
   ) {}
+  private readonly logger = new Logger(AuthService.name);
 
   async validateUser(email: string, pass: string): Promise<any> {
+    this.logger.log('validating');
     const user = await this.userService.userLogIn(email);
+    this.logger.log(user.email);
     const match = await bcrypt.compare(pass, user.password);
+    this.logger.log(match);
 
     if (match) {
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -23,13 +28,14 @@ export class AuthService {
     return null;
   }
 
-  async login(user: any) {
+  async login(user: User) {
     const { email, id } = user;
     const payload = { email: email, sub: id };
 
     return {
       access_token: this.jwtService.sign(payload),
-      id: id,
+      email: email,
+      loggedIn: true,
     };
   }
 
@@ -38,7 +44,8 @@ export class AuthService {
     const payload = { email: email, sub: id };
     return {
       access_token: this.jwtService.sign(payload),
-      id: id,
+      email: email,
+      loggedIn: true,
     };
   }
 }

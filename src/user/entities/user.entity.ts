@@ -22,7 +22,9 @@ export class User {
   })
   climbingProfile: ClimberProfile;
 
-  @Column()
+  @Column({
+    unique: true,
+  })
   email: string;
 
   @Column()
