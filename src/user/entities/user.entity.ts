@@ -10,6 +10,7 @@ import {
   OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
+  JoinColumn,
 } from 'typeorm';
 
 @Entity()
@@ -18,8 +19,9 @@ export class User {
   id: string;
 
   @OneToOne(() => ClimberProfile, (climberProfile) => climberProfile.climber, {
-    cascade: true,
+    cascade: ['insert', 'soft-remove', 'update'],
   })
+  @JoinColumn()
   climbingProfile: ClimberProfile;
 
   @Column({
