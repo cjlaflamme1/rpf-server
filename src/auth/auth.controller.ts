@@ -5,9 +5,7 @@ import {
   Post,
   UseGuards,
   Logger,
-  Req,
 } from '@nestjs/common';
-import { CreateUserDto } from 'src/user/dto/create-user.dto';
 import { IncomingUserDTO } from 'src/user/dto/incoming-user-dto';
 import { AuthService } from './auth.service';
 import { LocalAuthGuard } from './local-auth.guard';
