@@ -5,9 +5,8 @@ import {
   Post,
   UseGuards,
   Logger,
-  Req,
 } from '@nestjs/common';
-import { CreateUserDto } from 'src/user/dto/create-user.dto';
+import { IncomingUserDTO } from 'src/user/dto/incoming-user-dto';
 import { AuthService } from './auth.service';
 import { LocalAuthGuard } from './local-auth.guard';
 
@@ -17,7 +16,7 @@ export class AuthController {
   private readonly logger = new Logger(AuthController.name);
 
   @Post('signup')
-  signUp(@Body() createUserDto: CreateUserDto) {
+  signUp(@Body() createUserDto: IncomingUserDTO) {
     this.logger.log('ping signup');
     return this.authService.signUp(createUserDto);
   }

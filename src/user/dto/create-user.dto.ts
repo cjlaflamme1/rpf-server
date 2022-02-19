@@ -1,7 +1,7 @@
-import { ClimberProfile } from 'src/climber-profile/entities/climber-profile.entity';
+import { CreateClimberProfileDto } from 'src/climber-profile/dto/create-climber-profile.dto';
 
 export class CreateUserDto {
-  climbingProfile: ClimberProfile;
+  climbingProfile: CreateClimberProfileDto;
   email: string;
   password: string;
   firstName: string;
