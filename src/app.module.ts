@@ -3,9 +3,13 @@ import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { UserModule } from './user/user.module';
+import { AuthModule } from './auth/auth.module';
+import { ClimberProfileModule } from './climber-profile/climber-profile.module';
 
 @Module({
   imports: [
+    ConfigModule.forRoot({ isGlobal: true }),
     TypeOrmModule.forRoot({
       type: 'mysql',
       host: process.env.DB_HOST,
@@ -13,9 +17,12 @@ import { AppService } from './app.service';
       username: process.env.DB_USERNAME,
       password: process.env.DB_PASSWORD,
       database: process.env.DB_NAME,
-      entities: [],
-      synchronize: true, // SET TO FALSE, before production after migration integrations.
+      entities: ['dist/**/*.entity{.ts,.js}'],
+      synchronize: true,
     }),
+    UserModule,
+    AuthModule,
+    ClimberProfileModule,
   ],
   controllers: [AppController],
   providers: [AppService],
