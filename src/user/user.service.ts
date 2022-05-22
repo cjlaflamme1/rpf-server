@@ -58,7 +58,7 @@ export class UserService {
       incomingUser.password = null;
       return incomingUser;
     }
-    return HttpStatus.NOT_FOUND;
+    return null;
   }
 
   findOne(id: number) {

@@ -6,6 +6,7 @@ import { AppService } from './app.service';
 import { UserModule } from './user/user.module';
 import { AuthModule } from './auth/auth.module';
 import { ClimberProfileModule } from './climber-profile/climber-profile.module';
+import { ClimbAvailabilityGenModule } from './climb-availability-gen/climb-availability-gen.module';
 
 @Module({
   imports: [
@@ -23,6 +24,7 @@ import { ClimberProfileModule } from './climber-profile/climber-profile.module';
     UserModule,
     AuthModule,
     ClimberProfileModule,
+    ClimbAvailabilityGenModule,
   ],
   controllers: [AppController],
   providers: [AppService],
