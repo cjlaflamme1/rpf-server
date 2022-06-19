@@ -47,7 +47,6 @@ export class UserService {
   }
 
   async findByEmail(email: string, relations: string[] = []) {
-    this.logger.log(email);
     const incomingUser = await this.usersRepository.findOne({
       where: {
         email: email,
