@@ -10,6 +10,7 @@ import {
   Req,
   HttpException,
   HttpStatus,
+  Logger,
 } from '@nestjs/common';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { UserService } from 'src/user/user.service';
@@ -24,6 +25,7 @@ export class ClimbAvailabilityScheduledController {
     private readonly climbAvailabilityScheduledService: ClimbAvailabilityScheduledService,
     private readonly userService: UserService,
   ) {}
+  logger = new Logger(ClimbAvailabilityScheduledController.name);
 
   @Post()
   async create(
@@ -50,7 +52,7 @@ export class ClimbAvailabilityScheduledController {
       user.climbAvailabilityScheduled &&
       user.climbAvailabilityScheduled.length > 0
     ) {
-      return user.climbAvailabilityGen;
+      return user.climbAvailabilityScheduled;
     }
     return [];
   }
