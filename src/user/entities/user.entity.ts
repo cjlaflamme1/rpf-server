@@ -1,4 +1,5 @@
 import { ClimbAvailabilityGen } from 'src/climb-availability-gen/entities/climb-availability-gen.entity';
+import { ClimbAvailabilityScheduled } from 'src/climb-availability-scheduled/entities/climb-availability-scheduled.entity';
 import { ClimberProfile } from 'src/climber-profile/entities/climber-profile.entity';
 import {
   BaseEntity,
@@ -49,6 +50,12 @@ export class User {
     (climbAvailabilityGen) => climbAvailabilityGen.user,
   )
   climbAvailabilityGen: ClimbAvailabilityGen[];
+
+  @OneToMany(
+    () => ClimbAvailabilityScheduled,
+    (climbAvailabilityScheduled) => climbAvailabilityScheduled.initialUser,
+  )
+  climbAvailabilityScheduled: ClimbAvailabilityScheduled[];
 
   @CreateDateColumn()
   createdAt: Date;

@@ -7,6 +7,7 @@ import { UserModule } from './user/user.module';
 import { AuthModule } from './auth/auth.module';
 import { ClimberProfileModule } from './climber-profile/climber-profile.module';
 import { ClimbAvailabilityGenModule } from './climb-availability-gen/climb-availability-gen.module';
+import { ClimbAvailabilityScheduledModule } from './climb-availability-scheduled/climb-availability-scheduled.module';
 
 @Module({
   imports: [
@@ -25,6 +26,7 @@ import { ClimbAvailabilityGenModule } from './climb-availability-gen/climb-avail
     AuthModule,
     ClimberProfileModule,
     ClimbAvailabilityGenModule,
+    ClimbAvailabilityScheduledModule,
   ],
   controllers: [AppController],
   providers: [AppService],
