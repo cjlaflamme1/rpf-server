@@ -68,9 +68,6 @@ export class ClimbAvailabilityScheduledService {
     const allDayMatches = await this.climbAvailSchedRepository.find({
       relations: ['initialUser'],
       where: {
-        // startDateTime: MoreThanOrEqual(
-        //   new Date(usersSchedule.startDateTime).toISOString(),
-        // ),
         startDateTime: Raw(
           (incomingDate) => `DATE(${incomingDate}) >= :compDate `,
           { compDate: reformatUserDate },

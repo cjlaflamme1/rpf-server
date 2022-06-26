@@ -69,6 +69,7 @@ export class ClimbAvailabilityScheduledController {
   async findOne(@Param('id') id: string, @Req() req) {
     const user = await this.userService.findByEmail(req.user.email, [
       'climbAvailabilityScheduled',
+      'climbAvailabilityScheduled.initialUser',
     ]);
     if (user) {
       if (
@@ -79,7 +80,13 @@ export class ClimbAvailabilityScheduledController {
         const item = user.climbAvailabilityScheduled.find(
           (avail) => avail.id === id,
         );
-        return item;
+        const repackageItem = {
+          ...item,
+          matches: await this.climbAvailabilityScheduledService.findMatches(
+            item,
+          ),
+        };
+        return repackageItem;
       }
     }
     throw new HttpException(
