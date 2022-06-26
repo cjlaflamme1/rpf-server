@@ -46,13 +46,21 @@ export class ClimbAvailabilityScheduledController {
   async findAll(@Req() req) {
     const user = await this.userService.findByEmail(req.user.email, [
       'climbAvailabilityScheduled',
+      'climbAvailabilityScheduled.initialUser',
     ]);
     if (
       user &&
       user.climbAvailabilityScheduled &&
       user.climbAvailabilityScheduled.length > 0
     ) {
-      return user.climbAvailabilityScheduled;
+      return await Promise.all(
+        user.climbAvailabilityScheduled.map(async (userSchedule) => ({
+          ...userSchedule,
+          matches: await this.climbAvailabilityScheduledService.findMatches(
+            userSchedule,
+          ),
+        })),
+      );
     }
     return [];
   }

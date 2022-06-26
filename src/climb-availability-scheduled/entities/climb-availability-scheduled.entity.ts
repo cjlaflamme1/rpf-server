@@ -1,3 +1,4 @@
+import { ClimbAvailabilityGen } from 'src/climb-availability-gen/entities/climb-availability-gen.entity';
 import { User } from 'src/user/entities/user.entity';
 import {
   BaseEntity,
@@ -12,6 +13,7 @@ import {
   UpdateDateColumn,
   JoinColumn,
   ManyToOne,
+  JoinTable,
 } from 'typeorm';
 
 @Entity()
