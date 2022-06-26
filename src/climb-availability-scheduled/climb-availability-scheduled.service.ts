@@ -98,6 +98,32 @@ export class ClimbAvailabilityScheduledService {
         }
       });
     }
+    const primeUserArea: string[] = usersSchedule.areas
+      ? JSON.parse(usersSchedule.areas)
+      : [];
+    if (primeUserArea.includes('Any') && returnedMatches.length > 0) {
+      return returnedMatches.map((newMatch) => {
+        newMatch.initialUser.password = null;
+        newMatch.areas = newMatch.areas ? JSON.parse(newMatch.areas) : [];
+        return newMatch;
+      });
+    }
+    if (returnedMatches.length > 0) {
+      return returnedMatches.filter((match) => {
+        const matchAreas: string[] = match.areas ? JSON.parse(match.areas) : [];
+        const matchedResults: string[] = matchAreas.filter((area) =>
+          primeUserArea.includes(area),
+        );
+        if (
+          (matchedResults && matchedResults.length > 0) ||
+          matchAreas.includes('Any')
+        ) {
+          match.initialUser.password = null;
+          match.areas = match.areas ? JSON.parse(match.areas) : [];
+          return match;
+        }
+      });
+    }
     return returnedMatches;
   }
 }

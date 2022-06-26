@@ -59,6 +59,10 @@ export class ClimbAvailabilityScheduledController {
           matches: await this.climbAvailabilityScheduledService.findMatches(
             userSchedule,
           ),
+          initialUser: {
+            ...userSchedule.initialUser,
+            password: null,
+          },
         })),
       );
     }
@@ -72,6 +76,7 @@ export class ClimbAvailabilityScheduledController {
       'climbAvailabilityScheduled.initialUser',
     ]);
     if (user) {
+      user.password = null;
       if (
         user.climbAvailabilityScheduled &&
         user.climbAvailabilityScheduled.length > 0 &&
@@ -85,6 +90,10 @@ export class ClimbAvailabilityScheduledController {
           matches: await this.climbAvailabilityScheduledService.findMatches(
             item,
           ),
+          initialUser: {
+            ...item.initialUser,
+            password: null,
+          },
         };
         return repackageItem;
       }
