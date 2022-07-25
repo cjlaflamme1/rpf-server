@@ -60,15 +60,19 @@ export class UserService {
     return null;
   }
 
-  findOne(id: number) {
+  findOne(id: string) {
     return `This action returns a #${id} user`;
   }
 
-  update(id: number, updateUserDto: UpdateUserDto) {
-    return `This action updates a #${id} user`;
+  async update(id: string, updateUserDto: UpdateUserDto) {
+    const updatedUser = await this.usersRepository.save({
+      id,
+      ...updateUserDto,
+    });
+    return this.usersRepository.findOne(updatedUser.id);
   }
 
-  remove(id: number) {
+  remove(id: string) {
     return `This action removes a #${id} user`;
   }
 

@@ -45,6 +45,11 @@ export class User {
   })
   profilePhoto: string;
 
+  @Column({
+    default: true,
+  })
+  finderVisibility: boolean;
+
   @OneToMany(
     () => ClimbAvailabilityGen,
     (climbAvailabilityGen) => climbAvailabilityGen.user,

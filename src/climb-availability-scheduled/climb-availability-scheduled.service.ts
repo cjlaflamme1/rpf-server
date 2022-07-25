@@ -74,6 +74,7 @@ export class ClimbAvailabilityScheduledService {
         ),
         initialUser: {
           id: Not(usersSchedule.initialUser.id),
+          finderVisibility: true,
         },
       },
     });
