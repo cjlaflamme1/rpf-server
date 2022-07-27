@@ -1,8 +1,7 @@
 import { HttpStatus, Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { doesNotMatch } from 'assert';
 import { User } from 'src/user/entities/user.entity';
-import { MoreThan, MoreThanOrEqual, Not, Raw, Repository } from 'typeorm';
+import { Not, Raw, Repository } from 'typeorm';
 import { CreateClimbAvailabilityScheduledDto } from './dto/create-climb-availability-scheduled.dto';
 import { UpdateClimbAvailabilityScheduledDto } from './dto/update-climb-availability-scheduled.dto';
 import { ClimbAvailabilityScheduled } from './entities/climb-availability-scheduled.entity';
@@ -29,9 +28,9 @@ export class ClimbAvailabilityScheduledService {
   //   return `This action returns all climbAvailabilityScheduled`;
   // }
 
-  // findOne(id: number) {
-  //   return `This action returns a #${id} climbAvailabilityScheduled`;
-  // }
+  findOne(id: string) {
+    return this.climbAvailSchedRepository.findOne(id);
+  }
 
   update(
     id: string,

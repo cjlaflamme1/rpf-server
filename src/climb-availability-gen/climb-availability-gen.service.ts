@@ -27,9 +27,9 @@ export class ClimbAvailabilityGenService {
   //   return `This action returns all climbAvailabilityGen`;
   // }
 
-  // findOne(id: number) {
-  //   return `This action returns a #${id} climbAvailabilityGen`;
-  // }
+  findOne(id: string) {
+    return this.climbAvailabilityGenRepository.findOne(id);
+  }
 
   async update(
     id: string,

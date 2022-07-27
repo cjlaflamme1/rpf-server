@@ -3,19 +3,14 @@ import { ClimbAvailabilityScheduled } from 'src/climb-availability-scheduled/ent
 import { ClimbMessage } from 'src/climb-message/entities/climb-message.entity';
 import { User } from 'src/user/entities/user.entity';
 import {
-  BaseEntity,
   Column,
   CreateDateColumn,
   DeleteDateColumn,
   Entity,
-  ManyToMany,
-  OneToOne,
   OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
-  JoinColumn,
   ManyToOne,
-  JoinTable,
 } from 'typeorm';
 
 @Entity()

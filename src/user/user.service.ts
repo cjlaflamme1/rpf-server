@@ -61,7 +61,7 @@ export class UserService {
   }
 
   findOne(id: string) {
-    return `This action returns a #${id} user`;
+    return this.usersRepository.findOne(id);
   }
 
   async update(id: string, updateUserDto: UpdateUserDto) {
