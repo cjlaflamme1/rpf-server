@@ -77,6 +77,17 @@ export class UserService {
   }
 
   async userLogIn(email: string): Promise<User | undefined> {
-    return this.usersRepository.findOne({ where: { email: email } });
+    return this.usersRepository.findOne({
+      select: [
+        'id',
+        'email',
+        'password',
+        'firstName',
+        'lastName',
+        'profilePhoto',
+        'finderVisibility',
+      ],
+      where: { email: email },
+    });
   }
 }
