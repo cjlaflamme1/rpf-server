@@ -8,6 +8,8 @@ import { AuthModule } from './auth/auth.module';
 import { ClimberProfileModule } from './climber-profile/climber-profile.module';
 import { ClimbAvailabilityGenModule } from './climb-availability-gen/climb-availability-gen.module';
 import { ClimbAvailabilityScheduledModule } from './climb-availability-scheduled/climb-availability-scheduled.module';
+import { ClimbRequestModule } from './climb-request/climb-request.module';
+import { ClimbMessageModule } from './climb-message/climb-message.module';
 
 @Module({
   imports: [
@@ -27,6 +29,8 @@ import { ClimbAvailabilityScheduledModule } from './climb-availability-scheduled
     ClimberProfileModule,
     ClimbAvailabilityGenModule,
     ClimbAvailabilityScheduledModule,
+    ClimbRequestModule,
+    ClimbMessageModule,
   ],
   controllers: [AppController],
   providers: [AppService],

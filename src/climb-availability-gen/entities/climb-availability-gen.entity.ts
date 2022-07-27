@@ -1,3 +1,4 @@
+import { ClimbRequest } from 'src/climb-request/entities/climb-request.entity';
 import { User } from 'src/user/entities/user.entity';
 import {
   BaseEntity,
@@ -45,6 +46,12 @@ export class ClimbAvailabilityGen {
 
   @ManyToOne(() => User, (user) => user.climbAvailabilityGen)
   user: User;
+
+  @OneToMany(
+    () => ClimbRequest,
+    (climbRequest) => climbRequest.targetGenRequest,
+  )
+  incomingClimbRequests: ClimbRequest[];
 
   @CreateDateColumn()
   createdAt: Date;
