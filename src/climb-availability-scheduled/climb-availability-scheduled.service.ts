@@ -1,5 +1,7 @@
 import { HttpStatus, Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { ClimbAvailabilityGenService } from 'src/climb-availability-gen/climb-availability-gen.service';
+import { ClimbAvailabilityGen } from 'src/climb-availability-gen/entities/climb-availability-gen.entity';
 import { User } from 'src/user/entities/user.entity';
 import { Not, Raw, Repository } from 'typeorm';
 import { CreateClimbAvailabilityScheduledDto } from './dto/create-climb-availability-scheduled.dto';
@@ -11,6 +13,7 @@ export class ClimbAvailabilityScheduledService {
   constructor(
     @InjectRepository(ClimbAvailabilityScheduled)
     private climbAvailSchedRepository: Repository<ClimbAvailabilityScheduled>,
+    private climbAvailGenService: ClimbAvailabilityGenService,
   ) {}
   logger = new Logger(ClimbAvailabilityScheduledService.name);
   create(
@@ -54,7 +57,7 @@ export class ClimbAvailabilityScheduledService {
     }
     return HttpStatus.NOT_FOUND;
   }
-  async findMatches(usersSchedule: ClimbAvailabilityScheduled) {
+  async findSchedMatches(usersSchedule: ClimbAvailabilityScheduled) {
     const returnedMatches: ClimbAvailabilityScheduled[] = [];
     const usersStartTime = usersSchedule.startDateTime.getTime();
     const usersEndTime = usersSchedule.endDateTime.getTime();
