@@ -7,8 +7,10 @@ import {
   Param,
   Delete,
   UseGuards,
+  Req,
 } from '@nestjs/common';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
+import { UserService } from 'src/user/user.service';
 import { ClimbMessageService } from './climb-message.service';
 import { CreateClimbMessageDto } from './dto/create-climb-message.dto';
 import { UpdateClimbMessageDto } from './dto/update-climb-message.dto';
@@ -16,7 +18,10 @@ import { UpdateClimbMessageDto } from './dto/update-climb-message.dto';
 @Controller('climb-message')
 @UseGuards(JwtAuthGuard)
 export class ClimbMessageController {
-  constructor(private readonly climbMessageService: ClimbMessageService) {}
+  constructor(
+    private readonly climbMessageService: ClimbMessageService,
+    private userService: UserService,
+  ) {}
 
   @Post()
   create(@Body() createClimbMessageDto: CreateClimbMessageDto) {
@@ -24,8 +29,18 @@ export class ClimbMessageController {
   }
 
   @Get()
-  findAll() {
-    return this.climbMessageService.findAll();
+  async findAll(@Req() req) {
+    // const user = await this.userService.findByEmail(req.user.email, [
+    //   'receivedClimbRequests',
+    //   'receivedClimbRequests.targetGenRequest',
+    //   'receivedClimbRequests.targetScheduledRequest',
+    //   'receivedClimbRequests.initiatingUser',
+    //   'receivedClimbRequests.initiatingEntry',
+    // ]);
+    // if (user.receivedClimbRequests && user.receivedClimbRequests.length > 0) {
+    //   return user.receivedClimbRequests;
+    // }
+    return [];
   }
 
   @Get(':id')

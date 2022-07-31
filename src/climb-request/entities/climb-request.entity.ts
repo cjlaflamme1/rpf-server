@@ -61,7 +61,7 @@ export class ClimbRequest {
   })
   messages: ClimbMessage[];
 
-  @ManyToOne(() => User)
+  @ManyToOne(() => User, (user) => user.receivedClimbRequests)
   targetUser: User;
 
   @CreateDateColumn()

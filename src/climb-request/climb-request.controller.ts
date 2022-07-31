@@ -59,8 +59,18 @@ export class ClimbRequestController {
   }
 
   @Get()
-  findAll() {
-    return this.climbRequestService.findAll();
+  async findAll(@Req() req) {
+    const user = await this.userService.findByEmail(req.user.email, [
+      'receivedClimbRequests',
+      'receivedClimbRequests.targetGenRequest',
+      'receivedClimbRequests.targetScheduledRequest',
+      'receivedClimbRequests.initiatingUser',
+      'receivedClimbRequests.initiatingEntry',
+    ]);
+    if (user.receivedClimbRequests && user.receivedClimbRequests.length > 0) {
+      return user.receivedClimbRequests;
+    }
+    return [];
   }
 
   @Get(':id')
