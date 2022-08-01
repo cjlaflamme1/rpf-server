@@ -45,19 +45,19 @@ export class ClimbRequestService {
     return this.climbRequestRepository.save(createClimbRequestDto);
   }
 
-  findAll() {
-    return `This action returns all climbRequest`;
+  // findAll() {
+  //   return `This action returns all climbRequest`;
+  // }
+
+  findOne(id: string, relations: string[] = []) {
+    return this.climbRequestRepository.findOne(id, { relations });
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} climbRequest`;
-  }
+  // update(id: number, updateClimbRequestDto: UpdateClimbRequestDto) {
+  //   return `This action updates a #${id} climbRequest`;
+  // }
 
-  update(id: number, updateClimbRequestDto: UpdateClimbRequestDto) {
-    return `This action updates a #${id} climbRequest`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} climbRequest`;
-  }
+  // remove(id: number) {
+  //   return `This action removes a #${id} climbRequest`;
+  // }
 }

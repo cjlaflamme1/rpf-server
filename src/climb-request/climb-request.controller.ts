@@ -8,6 +8,8 @@ import {
   Delete,
   UseGuards,
   Req,
+  HttpException,
+  HttpStatus,
 } from '@nestjs/common';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { ClimbAvailabilityGenService } from 'src/climb-availability-gen/climb-availability-gen.service';
@@ -74,8 +76,25 @@ export class ClimbRequestController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.climbRequestService.findOne(+id);
+  async findOne(@Param('id') id: string, @Req() req) {
+    const request = await this.climbRequestService.findOne(id, [
+      'targetGenRequest',
+      'targetScheduledRequest',
+      'initiatingUser',
+      'initiatingEntry',
+      'targetUser',
+    ]);
+    if (
+      (request.targetUser && request.targetUser.email === req.user.email) ||
+      (request.initiatingUser &&
+        request.initiatingUser.email === req.user.email)
+    ) {
+      return request;
+    }
+    throw new HttpException(
+      'You do not have permission to view this request',
+      HttpStatus.BAD_REQUEST,
+    );
   }
 
   // @Patch(':id')
