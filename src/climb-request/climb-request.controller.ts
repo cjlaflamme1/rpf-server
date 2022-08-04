@@ -97,13 +97,29 @@ export class ClimbRequestController {
     );
   }
 
-  // @Patch(':id')
-  // update(
-  //   @Param('id') id: string,
-  //   @Body() updateClimbRequestDto: UpdateClimbRequestDto,
-  // ) {
-  //   return this.climbRequestService.update(+id, updateClimbRequestDto);
-  // }
+  @Patch(':id')
+  async update(
+    @Param('id') id: string,
+    @Body() updateClimbRequestDto: UpdateClimbRequestDto,
+    @Req() req,
+  ) {
+    const currentMatch = await this.climbRequestService.findOne(id, [
+      'initiatingUser',
+      'targetUser',
+    ]);
+    if (
+      (currentMatch.targetUser &&
+        currentMatch.targetUser.email === req.user.email) ||
+      (currentMatch.initiatingUser &&
+        currentMatch.initiatingUser.email === req.user.email)
+    ) {
+      return this.climbRequestService.update(id, updateClimbRequestDto);
+    }
+    throw new HttpException(
+      'You do not have permission to update this request',
+      HttpStatus.BAD_REQUEST,
+    );
+  }
 
   // @Delete(':id')
   // remove(@Param('id') id: string) {

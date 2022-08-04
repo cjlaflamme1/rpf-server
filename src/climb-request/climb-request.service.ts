@@ -53,9 +53,19 @@ export class ClimbRequestService {
     return this.climbRequestRepository.findOne(id, { relations });
   }
 
-  // update(id: number, updateClimbRequestDto: UpdateClimbRequestDto) {
-  //   return `This action updates a #${id} climbRequest`;
-  // }
+  async update(id: string, updateClimbRequestDto: UpdateClimbRequestDto) {
+    const climbreq = await this.climbRequestRepository.save({
+      id,
+      ...updateClimbRequestDto,
+    });
+    return this.findOne(climbreq.id, [
+      'targetGenRequest',
+      'targetScheduledRequest',
+      'initiatingUser',
+      'initiatingEntry',
+      'targetUser',
+    ]);
+  }
 
   // remove(id: number) {
   //   return `This action removes a #${id} climbRequest`;
