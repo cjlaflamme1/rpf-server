@@ -23,7 +23,7 @@ import { S3Service } from './services/s3/s3.service';
       password: process.env.DB_PASSWORD,
       database: process.env.DB_NAME,
       entities: ['dist/**/*.entity{.ts,.js}'],
-      synchronize: true,
+      synchronize: false,
     }),
     UserModule,
     AuthModule,
