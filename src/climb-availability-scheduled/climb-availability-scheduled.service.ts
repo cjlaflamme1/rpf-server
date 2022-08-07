@@ -70,6 +70,7 @@ export class ClimbAvailabilityScheduledService {
     const allDayMatches = await this.climbAvailSchedRepository.find({
       relations: [
         'initialUser',
+        'initialUser.climbingProfile',
         'incomingClimbRequests',
         'incomingClimbRequests.initiatingEntry',
         'climbRequests',

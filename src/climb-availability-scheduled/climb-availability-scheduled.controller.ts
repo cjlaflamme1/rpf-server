@@ -49,6 +49,7 @@ export class ClimbAvailabilityScheduledController {
     const user = await this.userService.findByEmail(req.user.email, [
       'climbAvailabilityScheduled',
       'climbAvailabilityScheduled.initialUser',
+      'climbAvailabilityScheduled.initialUser.climbingProfile',
     ]);
     if (
       user &&

@@ -76,25 +76,23 @@ export class UserService {
     return null;
   }
 
-  findOne(id: string) {
-    return this.usersRepository.findOne(id);
+  findOne(id: string, relations: string[] = []) {
+    return this.usersRepository.findOne(id, { relations });
   }
 
   async update(id: string, updateUserDto: UpdateUserDto) {
-    let preAuthURL = '';
-    if (updateUserDto.imageFileName && updateUserDto.imageFileType) {
-      preAuthURL = await this.s3Service.putImageObjectSignedUrl(
-        updateUserDto.imageFileName,
-        updateUserDto.imageFileType,
-      );
-      updateUserDto.profilePhoto = updateUserDto.imageFileName;
-    }
     const updatedUser = await this.usersRepository.save({
       id,
       ...updateUserDto,
     });
-    const allUserInfo = await this.usersRepository.findOne(updatedUser.id);
-    return { ...allUserInfo, preAuthURL };
+    const allUserInfo = await this.findOne(updatedUser.id, ['climbingProfile']);
+    if (allUserInfo.profilePhoto) {
+      const imageGetURL = await this.s3Service.getImageObjectSignedUrl(
+        allUserInfo.profilePhoto,
+      );
+      return { ...allUserInfo, imageGetURL };
+    }
+    return allUserInfo;
   }
 
   remove(id: string) {

@@ -63,6 +63,7 @@ export class ClimbAvailabilityGenService {
     const dayMatches = await this.climbAvailabilityGenRepository.find({
       relations: [
         'user',
+        'user.climbingProfile',
         'incomingClimbRequests',
         'incomingClimbRequests.initiatingEntry',
       ],

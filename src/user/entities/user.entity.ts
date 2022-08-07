@@ -46,6 +46,17 @@ export class User {
   @Column({
     nullable: true,
   })
+  location: string;
+
+  @Column({
+    nullable: true,
+    type: 'text',
+  })
+  shortBio: string;
+
+  @Column({
+    nullable: true,
+  })
   profilePhoto: string;
 
   @Column({
