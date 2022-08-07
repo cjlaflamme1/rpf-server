@@ -18,4 +18,6 @@ export class IncomingUserDTO {
   boulderOnsight: string;
   boulderRedpoint: string;
   preferredCrags: string;
+  imageFileName?: string;
+  imageFileType?: string;
 }

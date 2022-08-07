@@ -7,16 +7,25 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
 import { IncomingUserDTO } from './dto/incoming-user-dto';
+import { S3Service } from 'src/services/s3/s3.service';
 
 @Injectable()
 export class UserService {
   constructor(
     @InjectRepository(User)
     private usersRepository: Repository<User>,
+    private s3Service: S3Service,
   ) {}
   private readonly logger = new Logger(UserService.name);
 
   async create(createUserDto: IncomingUserDTO) {
+    // let preAuthURL = '';
+    // if (createUserDto.imageFileName && createUserDto.imageFileType) {
+    //   preAuthURL = await this.s3Service.putImageObjectSignedUrl(
+    //     createUserDto.imageFileName,
+    //     createUserDto.imageFileType,
+    //   );
+    // }
     const userBody: CreateUserDto = {
       profilePhoto: createUserDto.profilePhoto,
       email: createUserDto.email,
@@ -39,7 +48,8 @@ export class UserService {
       },
     };
     userBody.password = await bcrypt.hash(userBody.password, saltOrRounds);
-    return this.usersRepository.save(userBody);
+    const newUser = await this.usersRepository.save(userBody);
+    return newUser;
   }
 
   findAll() {
@@ -54,8 +64,14 @@ export class UserService {
       relations: relations,
     });
     if (incomingUser) {
+      let imageGetURL = '';
+      if (incomingUser.profilePhoto) {
+        imageGetURL = await this.s3Service.getImageObjectSignedUrl(
+          incomingUser.profilePhoto,
+        );
+      }
       incomingUser.password = null;
-      return incomingUser;
+      return { ...incomingUser, imageGetURL };
     }
     return null;
   }
@@ -65,19 +81,28 @@ export class UserService {
   }
 
   async update(id: string, updateUserDto: UpdateUserDto) {
+    let preAuthURL = '';
+    if (updateUserDto.imageFileName && updateUserDto.imageFileType) {
+      preAuthURL = await this.s3Service.putImageObjectSignedUrl(
+        updateUserDto.imageFileName,
+        updateUserDto.imageFileType,
+      );
+      updateUserDto.profilePhoto = updateUserDto.imageFileName;
+    }
     const updatedUser = await this.usersRepository.save({
       id,
       ...updateUserDto,
     });
-    return this.usersRepository.findOne(updatedUser.id);
+    const allUserInfo = await this.usersRepository.findOne(updatedUser.id);
+    return { ...allUserInfo, preAuthURL };
   }
 
   remove(id: string) {
     return `This action removes a #${id} user`;
   }
 
-  async userLogIn(email: string): Promise<User | undefined> {
-    return this.usersRepository.findOne({
+  async userLogIn(email: string) {
+    const user = await this.usersRepository.findOne({
       select: [
         'id',
         'email',
@@ -89,5 +114,14 @@ export class UserService {
       ],
       where: { email: email },
     });
+    if (user) {
+      let imageGetURL = '';
+      if (user.profilePhoto) {
+        imageGetURL = await this.s3Service.getImageObjectSignedUrl(
+          user.profilePhoto,
+        );
+      }
+      return { ...user, imageGetURL };
+    }
   }
 }

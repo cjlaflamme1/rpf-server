@@ -10,6 +10,7 @@ import { ClimbAvailabilityGenModule } from './climb-availability-gen/climb-avail
 import { ClimbAvailabilityScheduledModule } from './climb-availability-scheduled/climb-availability-scheduled.module';
 import { ClimbRequestModule } from './climb-request/climb-request.module';
 import { ClimbMessageModule } from './climb-message/climb-message.module';
+import { S3Service } from './services/s3/s3.service';
 
 @Module({
   imports: [
@@ -33,6 +34,6 @@ import { ClimbMessageModule } from './climb-message/climb-message.module';
     ClimbMessageModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, S3Service],
 })
 export class AppModule {}
