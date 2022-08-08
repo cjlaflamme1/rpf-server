@@ -21,6 +21,12 @@ export class ClimberProfile {
   @OneToOne(() => User, (user) => user.climbingProfile)
   climber: User;
 
+  @Column({
+    nullable: true,
+    type: 'text',
+  })
+  climberBio: string;
+
   @Column()
   trOnly: boolean;
 

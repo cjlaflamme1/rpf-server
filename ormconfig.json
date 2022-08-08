@@ -1,0 +1,15 @@
+{
+  "type": "mysql",
+  "host": "0.0.0.0",
+  "port": 3306,
+  "username": "root",
+  "password": "rootroot",
+  "database": "rpf_local2",
+  "entities": ["dist/**/*.entity{.ts,.js}"],
+  "synchronize": false,
+  "migrations": ["dist/migrations/*.js"],
+  "cli": {
+    "migrationsDir": "migrations"
+  }
+}
+

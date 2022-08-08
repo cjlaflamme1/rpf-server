@@ -8,6 +8,9 @@ import { AuthModule } from './auth/auth.module';
 import { ClimberProfileModule } from './climber-profile/climber-profile.module';
 import { ClimbAvailabilityGenModule } from './climb-availability-gen/climb-availability-gen.module';
 import { ClimbAvailabilityScheduledModule } from './climb-availability-scheduled/climb-availability-scheduled.module';
+import { ClimbRequestModule } from './climb-request/climb-request.module';
+import { ClimbMessageModule } from './climb-message/climb-message.module';
+import { S3Service } from './services/s3/s3.service';
 
 @Module({
   imports: [
@@ -20,15 +23,17 @@ import { ClimbAvailabilityScheduledModule } from './climb-availability-scheduled
       password: process.env.DB_PASSWORD,
       database: process.env.DB_NAME,
       entities: ['dist/**/*.entity{.ts,.js}'],
-      synchronize: true,
+      synchronize: false,
     }),
     UserModule,
     AuthModule,
     ClimberProfileModule,
     ClimbAvailabilityGenModule,
     ClimbAvailabilityScheduledModule,
+    ClimbRequestModule,
+    ClimbMessageModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, S3Service],
 })
 export class AppModule {}

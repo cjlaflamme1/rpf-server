@@ -13,6 +13,7 @@ import {
   Logger,
 } from '@nestjs/common';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
+import { ClimbAvailabilityGenService } from 'src/climb-availability-gen/climb-availability-gen.service';
 import { UserService } from 'src/user/user.service';
 import { ClimbAvailabilityScheduledService } from './climb-availability-scheduled.service';
 import { CreateClimbAvailabilityScheduledDto } from './dto/create-climb-availability-scheduled.dto';
@@ -24,6 +25,7 @@ export class ClimbAvailabilityScheduledController {
   constructor(
     private readonly climbAvailabilityScheduledService: ClimbAvailabilityScheduledService,
     private readonly userService: UserService,
+    private climbAvailGenService: ClimbAvailabilityGenService,
   ) {}
   logger = new Logger(ClimbAvailabilityScheduledController.name);
 
@@ -47,6 +49,7 @@ export class ClimbAvailabilityScheduledController {
     const user = await this.userService.findByEmail(req.user.email, [
       'climbAvailabilityScheduled',
       'climbAvailabilityScheduled.initialUser',
+      'climbAvailabilityScheduled.initialUser.climbingProfile',
     ]);
     if (
       user &&
@@ -56,9 +59,11 @@ export class ClimbAvailabilityScheduledController {
       return await Promise.all(
         user.climbAvailabilityScheduled.map(async (userSchedule) => ({
           ...userSchedule,
-          matches: await this.climbAvailabilityScheduledService.findMatches(
-            userSchedule,
-          ),
+          matches:
+            await this.climbAvailabilityScheduledService.findSchedMatches(
+              userSchedule,
+            ),
+          genMatches: await this.climbAvailGenService.findMatches(userSchedule),
           initialUser: {
             ...userSchedule.initialUser,
             password: null,
@@ -87,9 +92,9 @@ export class ClimbAvailabilityScheduledController {
         );
         const repackageItem = {
           ...item,
-          matches: await this.climbAvailabilityScheduledService.findMatches(
-            item,
-          ),
+          matches:
+            await this.climbAvailabilityScheduledService.findSchedMatches(item),
+          genMatches: await this.climbAvailGenService.findMatches(item),
           initialUser: {
             ...item.initialUser,
             password: null,

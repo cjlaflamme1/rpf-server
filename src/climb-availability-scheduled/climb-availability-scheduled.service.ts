@@ -1,8 +1,9 @@
 import { HttpStatus, Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { doesNotMatch } from 'assert';
+import { ClimbAvailabilityGenService } from 'src/climb-availability-gen/climb-availability-gen.service';
+import { ClimbAvailabilityGen } from 'src/climb-availability-gen/entities/climb-availability-gen.entity';
 import { User } from 'src/user/entities/user.entity';
-import { MoreThan, MoreThanOrEqual, Not, Raw, Repository } from 'typeorm';
+import { Not, Raw, Repository } from 'typeorm';
 import { CreateClimbAvailabilityScheduledDto } from './dto/create-climb-availability-scheduled.dto';
 import { UpdateClimbAvailabilityScheduledDto } from './dto/update-climb-availability-scheduled.dto';
 import { ClimbAvailabilityScheduled } from './entities/climb-availability-scheduled.entity';
@@ -12,6 +13,7 @@ export class ClimbAvailabilityScheduledService {
   constructor(
     @InjectRepository(ClimbAvailabilityScheduled)
     private climbAvailSchedRepository: Repository<ClimbAvailabilityScheduled>,
+    private climbAvailGenService: ClimbAvailabilityGenService,
   ) {}
   logger = new Logger(ClimbAvailabilityScheduledService.name);
   create(
@@ -29,9 +31,9 @@ export class ClimbAvailabilityScheduledService {
   //   return `This action returns all climbAvailabilityScheduled`;
   // }
 
-  // findOne(id: number) {
-  //   return `This action returns a #${id} climbAvailabilityScheduled`;
-  // }
+  findOne(id: string) {
+    return this.climbAvailSchedRepository.findOne(id);
+  }
 
   update(
     id: string,
@@ -55,7 +57,7 @@ export class ClimbAvailabilityScheduledService {
     }
     return HttpStatus.NOT_FOUND;
   }
-  async findMatches(usersSchedule: ClimbAvailabilityScheduled) {
+  async findSchedMatches(usersSchedule: ClimbAvailabilityScheduled) {
     const returnedMatches: ClimbAvailabilityScheduled[] = [];
     const usersStartTime = usersSchedule.startDateTime.getTime();
     const usersEndTime = usersSchedule.endDateTime.getTime();
@@ -66,7 +68,13 @@ export class ClimbAvailabilityScheduledService {
       .toISOString()
       .split('T')[0];
     const allDayMatches = await this.climbAvailSchedRepository.find({
-      relations: ['initialUser'],
+      relations: [
+        'initialUser',
+        'initialUser.climbingProfile',
+        'incomingClimbRequests',
+        'incomingClimbRequests.initiatingEntry',
+        'climbRequests',
+      ],
       where: {
         startDateTime: Raw(
           (incomingDate) => `DATE(${incomingDate}) >= :compDate `,
