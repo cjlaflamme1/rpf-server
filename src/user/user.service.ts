@@ -7,16 +7,25 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
 import { IncomingUserDTO } from './dto/incoming-user-dto';
+import { S3Service } from 'src/services/s3/s3.service';
 
 @Injectable()
 export class UserService {
   constructor(
     @InjectRepository(User)
     private usersRepository: Repository<User>,
+    private s3Service: S3Service,
   ) {}
   private readonly logger = new Logger(UserService.name);
 
   async create(createUserDto: IncomingUserDTO) {
+    // let preAuthURL = '';
+    // if (createUserDto.imageFileName && createUserDto.imageFileType) {
+    //   preAuthURL = await this.s3Service.putImageObjectSignedUrl(
+    //     createUserDto.imageFileName,
+    //     createUserDto.imageFileType,
+    //   );
+    // }
     const userBody: CreateUserDto = {
       profilePhoto: createUserDto.profilePhoto,
       email: createUserDto.email,
@@ -39,7 +48,8 @@ export class UserService {
       },
     };
     userBody.password = await bcrypt.hash(userBody.password, saltOrRounds);
-    return this.usersRepository.save(userBody);
+    const newUser = await this.usersRepository.save(userBody);
+    return newUser;
   }
 
   findAll() {
@@ -47,7 +57,6 @@ export class UserService {
   }
 
   async findByEmail(email: string, relations: string[] = []) {
-    this.logger.log(email);
     const incomingUser = await this.usersRepository.findOne({
       where: {
         email: email,
@@ -55,25 +64,62 @@ export class UserService {
       relations: relations,
     });
     if (incomingUser) {
+      let imageGetURL = '';
+      if (incomingUser.profilePhoto) {
+        imageGetURL = await this.s3Service.getImageObjectSignedUrl(
+          incomingUser.profilePhoto,
+        );
+      }
       incomingUser.password = null;
-      return incomingUser;
+      return { ...incomingUser, imageGetURL };
     }
-    return HttpStatus.NOT_FOUND;
+    return null;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} user`;
+  findOne(id: string, relations: string[] = []) {
+    return this.usersRepository.findOne(id, { relations });
   }
 
-  update(id: number, updateUserDto: UpdateUserDto) {
-    return `This action updates a #${id} user`;
+  async update(id: string, updateUserDto: UpdateUserDto) {
+    const updatedUser = await this.usersRepository.save({
+      id,
+      ...updateUserDto,
+    });
+    const allUserInfo = await this.findOne(updatedUser.id, ['climbingProfile']);
+    if (allUserInfo.profilePhoto) {
+      const imageGetURL = await this.s3Service.getImageObjectSignedUrl(
+        allUserInfo.profilePhoto,
+      );
+      return { ...allUserInfo, imageGetURL };
+    }
+    return allUserInfo;
   }
 
-  remove(id: number) {
+  remove(id: string) {
     return `This action removes a #${id} user`;
   }
 
-  async userLogIn(email: string): Promise<User | undefined> {
-    return this.usersRepository.findOne({ where: { email: email } });
+  async userLogIn(email: string) {
+    const user = await this.usersRepository.findOne({
+      select: [
+        'id',
+        'email',
+        'password',
+        'firstName',
+        'lastName',
+        'profilePhoto',
+        'finderVisibility',
+      ],
+      where: { email: email },
+    });
+    if (user) {
+      let imageGetURL = '';
+      if (user.profilePhoto) {
+        imageGetURL = await this.s3Service.getImageObjectSignedUrl(
+          user.profilePhoto,
+        );
+      }
+      return { ...user, imageGetURL };
+    }
   }
 }

@@ -1,3 +1,6 @@
+import { ClimbAvailabilityGen } from 'src/climb-availability-gen/entities/climb-availability-gen.entity';
+import { ClimbAvailabilityScheduled } from 'src/climb-availability-scheduled/entities/climb-availability-scheduled.entity';
+import { ClimbRequest } from 'src/climb-request/entities/climb-request.entity';
 import { ClimberProfile } from 'src/climber-profile/entities/climber-profile.entity';
 import {
   BaseEntity,
@@ -29,7 +32,9 @@ export class User {
   })
   email: string;
 
-  @Column()
+  @Column({
+    select: false,
+  })
   password: string;
 
   @Column()
@@ -41,7 +46,38 @@ export class User {
   @Column({
     nullable: true,
   })
+  location: string;
+
+  @Column({
+    nullable: true,
+    type: 'text',
+  })
+  shortBio: string;
+
+  @Column({
+    nullable: true,
+  })
   profilePhoto: string;
+
+  @Column({
+    default: true,
+  })
+  finderVisibility: boolean;
+
+  @OneToMany(
+    () => ClimbAvailabilityGen,
+    (climbAvailabilityGen) => climbAvailabilityGen.user,
+  )
+  climbAvailabilityGen: ClimbAvailabilityGen[];
+
+  @OneToMany(
+    () => ClimbAvailabilityScheduled,
+    (climbAvailabilityScheduled) => climbAvailabilityScheduled.initialUser,
+  )
+  climbAvailabilityScheduled: ClimbAvailabilityScheduled[];
+
+  @OneToMany(() => ClimbRequest, (climbRequest) => climbRequest.targetUser)
+  receivedClimbRequests: ClimbRequest[];
 
   @CreateDateColumn()
   createdAt: Date;
