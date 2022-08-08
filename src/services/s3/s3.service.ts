@@ -28,12 +28,15 @@ export class S3Service {
         Key: `${imageFileName}`,
         ContentType: `${imageFileType}`,
       };
+      this.logger.log(imageFileName);
+      this.logger.log(imageFileType);
       const command = new PutObjectCommand(imageBucketParams);
       const signedUrl = await getSignedUrl(this.s3Client, command, {
         expiresIn: 400,
       }).catch((e) => this.logger.log(e));
       return signedUrl;
     } catch (e) {
+      this.logger.log(e);
       return e;
     }
   };
