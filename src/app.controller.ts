@@ -4,13 +4,12 @@ import { JwtAuthGuard } from './auth/jwt-auth.guard';
 import { S3Service } from './services/s3/s3.service';
 
 @Controller()
-@UseGuards(JwtAuthGuard)
+// @UseGuards(JwtAuthGuard)
 export class AppController {
   constructor(
     private readonly appService: AppService,
     private s3Service: S3Service,
   ) {}
-
   @Get()
   getHello(): string {
     return this.appService.getHello();
