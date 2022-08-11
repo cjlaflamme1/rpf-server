@@ -1,5 +1,6 @@
 import { ClimbAvailabilityGen } from 'src/climb-availability-gen/entities/climb-availability-gen.entity';
 import { ClimbAvailabilityScheduled } from 'src/climb-availability-scheduled/entities/climb-availability-scheduled.entity';
+import { ClimbMeetup } from 'src/climb-meetup/entities/climb-meetup.entity';
 import { ClimbMessage } from 'src/climb-message/entities/climb-message.entity';
 import { User } from 'src/user/entities/user.entity';
 import {
@@ -11,6 +12,7 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
   ManyToOne,
+  OneToOne,
 } from 'typeorm';
 
 @Entity()
@@ -56,10 +58,8 @@ export class ClimbRequest {
   )
   targetGenRequest: ClimbAvailabilityGen;
 
-  @OneToMany(() => ClimbMessage, (climbMessage) => climbMessage.climbRequest, {
-    cascade: ['insert', 'update', 'soft-remove'],
-  })
-  messages: ClimbMessage[];
+  @OneToOne(() => ClimbMeetup, (climbMeetup) => climbMeetup.climbRequest)
+  climbMeetup: ClimbMeetup;
 
   @ManyToOne(() => User, (user) => user.receivedClimbRequests)
   targetUser: User;

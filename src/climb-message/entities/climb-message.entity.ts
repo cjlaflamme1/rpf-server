@@ -1,4 +1,4 @@
-import { ClimbRequest } from 'src/climb-request/entities/climb-request.entity';
+import { ClimbMeetup } from 'src/climb-meetup/entities/climb-meetup.entity';
 import { User } from 'src/user/entities/user.entity';
 import {
   Column,
@@ -20,8 +20,8 @@ export class ClimbMessage {
   })
   message: string;
 
-  @ManyToOne(() => ClimbRequest, (climbRequest) => climbRequest.messages)
-  climbRequest: ClimbRequest;
+  @ManyToOne(() => ClimbMeetup, (climbMeetup) => climbMeetup.messages)
+  climbMeetup: ClimbMessage;
 
   @ManyToOne(() => User)
   user: User;
