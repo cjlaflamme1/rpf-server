@@ -7,30 +7,51 @@ import {
   Param,
   Delete,
   UseGuards,
+  Req,
 } from '@nestjs/common';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
+import { ClimbRequestService } from 'src/climb-request/climb-request.service';
+import { UserService } from 'src/user/user.service';
 import { ClimbMeetupService } from './climb-meetup.service';
-import { CreateClimbMeetupDto } from './dto/create-climb-meetup.dto';
+import { IncomingMeetupDto } from './dto/incomingMeetup.dto';
 import { UpdateClimbMeetupDto } from './dto/update-climb-meetup.dto';
 
 @Controller('climb-meetup')
 @UseGuards(JwtAuthGuard)
 export class ClimbMeetupController {
-  constructor(private readonly climbMeetupService: ClimbMeetupService) {}
+  constructor(
+    private readonly climbMeetupService: ClimbMeetupService,
+    private userService: UserService,
+    private climbRequestService: ClimbRequestService,
+  ) {}
 
   @Post()
-  create(@Body() createClimbMeetupDto: CreateClimbMeetupDto) {
-    return this.climbMeetupService.create(createClimbMeetupDto);
+  async create(@Body() createClimbMeetupDto: IncomingMeetupDto) {
+    return this.climbMeetupService.create({
+      users: await this.userService.findByIds(createClimbMeetupDto.userIds),
+      climbRequest: await this.climbRequestService.findOne(
+        createClimbMeetupDto.climbRequestId,
+      ),
+    });
   }
 
   @Get()
-  findAll() {
-    return this.climbMeetupService.findAll();
+  async findAll(@Req() req) {
+    const user = await this.userService.findByEmail(req.user.email, [
+      'climbMeetups',
+      'climbMeetups.users',
+      'climbMeetups.messages',
+      'climbMeetups.climbRequest',
+    ]);
+    if (user.climbMeetups && user.climbMeetups.length > 0) {
+      return user.climbMeetups;
+    }
+    return [];
   }
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.climbMeetupService.findOne(+id);
+    return this.climbMeetupService.findOne(id);
   }
 
   @Patch(':id')
@@ -38,11 +59,11 @@ export class ClimbMeetupController {
     @Param('id') id: string,
     @Body() updateClimbMeetupDto: UpdateClimbMeetupDto,
   ) {
-    return this.climbMeetupService.update(+id, updateClimbMeetupDto);
+    return this.climbMeetupService.update(id, updateClimbMeetupDto);
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.climbMeetupService.remove(+id);
-  }
+  // @Delete(':id')
+  // remove(@Param('id') id: string) {
+  //   return this.climbMeetupService.remove(+id);
+  // }
 }

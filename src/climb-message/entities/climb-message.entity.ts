@@ -20,8 +20,13 @@ export class ClimbMessage {
   })
   message: string;
 
+  @Column({
+    default: false,
+  })
+  read: boolean;
+
   @ManyToOne(() => ClimbMeetup, (climbMeetup) => climbMeetup.messages)
-  climbMeetup: ClimbMessage;
+  climbMeetup: ClimbMeetup;
 
   @ManyToOne(() => User)
   user: User;

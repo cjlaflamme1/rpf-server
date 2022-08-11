@@ -80,6 +80,10 @@ export class UserService {
     return this.usersRepository.findOne(id, { relations });
   }
 
+  findByIds(ids: string[], relations: string[] = []) {
+    return this.usersRepository.findByIds(ids, { relations });
+  }
+
   async update(id: string, updateUserDto: UpdateUserDto) {
     const updatedUser = await this.usersRepository.save({
       id,
