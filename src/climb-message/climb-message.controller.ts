@@ -41,10 +41,10 @@ export class ClimbMessageController {
   //   return [];
   // }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.climbMessageService.findOne(id);
-  }
+  // @Get(':id')
+  // findOne(@Param('id') id: string) {
+  //   return this.climbMessageService.findOne(id);
+  // }
 
   @Patch(':id')
   update(

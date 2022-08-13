@@ -8,6 +8,8 @@ import {
   Delete,
   UseGuards,
   Req,
+  HttpException,
+  HttpStatus,
 } from '@nestjs/common';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { ClimbRequestService } from 'src/climb-request/climb-request.service';
@@ -40,7 +42,6 @@ export class ClimbMeetupController {
     const user = await this.userService.findByEmail(req.user.email, [
       'climbMeetups',
       'climbMeetups.users',
-      'climbMeetups.messages',
       'climbMeetups.climbRequest',
     ]);
     if (user.climbMeetups && user.climbMeetups.length > 0) {
@@ -50,8 +51,26 @@ export class ClimbMeetupController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.climbMeetupService.findOne(id);
+  async findOne(@Param('id') id: string, @Req() req) {
+    const user = await this.userService.findByEmail(req.user.email);
+    const requestedMeetup = await this.climbMeetupService.findOne(id, [
+      'climbRequest',
+      'messages',
+      'users',
+    ]);
+    if (
+      user &&
+      requestedMeetup &&
+      requestedMeetup.users &&
+      requestedMeetup.users.length > 0 &&
+      requestedMeetup.users.find((u) => u.id === user.id)
+    ) {
+      return requestedMeetup;
+    }
+    throw new HttpException(
+      'You are not permitted to view this match.',
+      HttpStatus.FORBIDDEN,
+    );
   }
 
   @Patch(':id')
