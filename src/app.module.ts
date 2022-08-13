@@ -11,6 +11,7 @@ import { ClimbAvailabilityScheduledModule } from './climb-availability-scheduled
 import { ClimbRequestModule } from './climb-request/climb-request.module';
 import { ClimbMessageModule } from './climb-message/climb-message.module';
 import { S3Service } from './services/s3/s3.service';
+import { ClimbMeetupModule } from './climb-meetup/climb-meetup.module';
 
 @Module({
   imports: [
@@ -32,6 +33,7 @@ import { S3Service } from './services/s3/s3.service';
     ClimbAvailabilityScheduledModule,
     ClimbRequestModule,
     ClimbMessageModule,
+    ClimbMeetupModule,
   ],
   controllers: [AppController],
   providers: [AppService, S3Service],

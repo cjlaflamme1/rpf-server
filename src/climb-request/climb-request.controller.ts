@@ -10,6 +10,7 @@ import {
   Req,
   HttpException,
   HttpStatus,
+  Logger,
 } from '@nestjs/common';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { ClimbAvailabilityGenService } from 'src/climb-availability-gen/climb-availability-gen.service';
@@ -31,6 +32,7 @@ export class ClimbRequestController {
     private readonly climbAvailSchedService: ClimbAvailabilityScheduledService,
     private readonly climbAvailGenService: ClimbAvailabilityGenService,
   ) {}
+  logger = new Logger(ClimbRequestController.name);
 
   @Post()
   async create(
