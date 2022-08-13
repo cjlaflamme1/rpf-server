@@ -10,6 +10,7 @@ import {
   Req,
   HttpException,
   HttpStatus,
+  Logger,
 } from '@nestjs/common';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { ClimbAvailabilityGenService } from 'src/climb-availability-gen/climb-availability-gen.service';
@@ -31,6 +32,7 @@ export class ClimbRequestController {
     private readonly climbAvailSchedService: ClimbAvailabilityScheduledService,
     private readonly climbAvailGenService: ClimbAvailabilityGenService,
   ) {}
+  logger = new Logger(ClimbRequestController.name);
 
   @Post()
   async create(
@@ -40,6 +42,7 @@ export class ClimbRequestController {
     req,
   ) {
     const user = await this.userService.findByEmail(req.user.email);
+    this.logger.log(JSON.stringify(user));
     const createClimbRequestDto: CreateClimbRequestDto = {
       initiatingEntry: await this.climbAvailSchedService.findOne(
         incomingDto.initiatingEntryId,
@@ -57,6 +60,7 @@ export class ClimbRequestController {
         : null,
       targetUser: await this.userService.findOne(incomingDto.targetUserId),
     };
+    this.logger.log(JSON.stringify(createClimbRequestDto));
     return this.climbRequestService.create(createClimbRequestDto);
   }
 
