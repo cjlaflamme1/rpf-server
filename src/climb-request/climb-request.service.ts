@@ -1,4 +1,4 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CreateClimbRequestDto } from './dto/create-climb-request.dto';
@@ -11,6 +11,7 @@ export class ClimbRequestService {
     @InjectRepository(ClimbRequest)
     private climbRequestRepository: Repository<ClimbRequest>,
   ) {}
+  logger = new Logger(ClimbRequestService.name);
   async create(createClimbRequestDto: CreateClimbRequestDto) {
     if (createClimbRequestDto.targetScheduledRequest) {
       const existingReq = await this.climbRequestRepository.find({
@@ -19,7 +20,7 @@ export class ClimbRequestService {
           targetScheduledRequest: createClimbRequestDto.targetScheduledRequest,
         },
       });
-      if (existingReq) {
+      if (existingReq && existingReq.length > 0) {
         throw new HttpException(
           'This match request already exists.',
           HttpStatus.CONFLICT,
@@ -34,7 +35,7 @@ export class ClimbRequestService {
             targetGenRequest: createClimbRequestDto.targetGenRequest,
           },
         });
-        if (existingReq) {
+        if (existingReq && existingReq.length > 0) {
           throw new HttpException(
             'This match request already exists.',
             HttpStatus.CONFLICT,

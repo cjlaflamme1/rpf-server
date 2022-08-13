@@ -4,13 +4,13 @@ import { ClimbMeetupController } from './climb-meetup.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ClimbMeetup } from './entities/climb-meetup.entity';
 import { UserModule } from 'src/user/user.module';
-import { ClimbRequestService } from 'src/climb-request/climb-request.service';
+import { ClimbRequestModule } from 'src/climb-request/climb-request.module';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([ClimbMeetup]),
     UserModule,
-    ClimbRequestService,
+    ClimbRequestModule,
   ],
   exports: [ClimbMeetupService],
   controllers: [ClimbMeetupController],
