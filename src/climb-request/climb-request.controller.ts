@@ -42,7 +42,6 @@ export class ClimbRequestController {
     req,
   ) {
     const user = await this.userService.findByEmail(req.user.email);
-    this.logger.log(JSON.stringify(user));
     const createClimbRequestDto: CreateClimbRequestDto = {
       initiatingEntry: await this.climbAvailSchedService.findOne(
         incomingDto.initiatingEntryId,
@@ -60,7 +59,6 @@ export class ClimbRequestController {
         : null,
       targetUser: await this.userService.findOne(incomingDto.targetUserId),
     };
-    this.logger.log(JSON.stringify(createClimbRequestDto));
     return this.climbRequestService.create(createClimbRequestDto);
   }
 

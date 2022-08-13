@@ -19,9 +19,9 @@ export class ClimbMessageService {
   //   return `This action returns all climbMessage`;
   // }
 
-  findOne(id: string, relations: string[] = []) {
-    return this.climbMessageRepository.findOne(id, { relations });
-  }
+  // findOne(id: string, relations: string[] = []) {
+  //   return this.climbMessageRepository.findOne(id, { relations });
+  // }
 
   update(id: string, updateClimbMessageDto: UpdateClimbMessageDto) {
     return this.climbMessageRepository.save({
