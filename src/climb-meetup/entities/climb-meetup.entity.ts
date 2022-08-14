@@ -23,6 +23,21 @@ export class ClimbMeetup {
   @Column()
   climbDate: Date;
 
+  @Column({
+    nullable: true,
+  })
+  climbStartTime: Date;
+
+  @Column({
+    nullable: true,
+  })
+  climbEndTime: Date;
+
+  @Column({
+    nullable: true,
+  })
+  climbLocation: string;
+
   @OneToOne(() => ClimbRequest, (climbRequest) => climbRequest.climbMeetup)
   @JoinColumn()
   climbRequest: ClimbRequest;
