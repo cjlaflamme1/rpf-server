@@ -59,8 +59,8 @@ export class ClimbAvailabilityScheduledService {
   }
   async findSchedMatches(usersSchedule: ClimbAvailabilityScheduled) {
     const returnedMatches: ClimbAvailabilityScheduled[] = [];
-    const usersStartTime = usersSchedule.startDateTime.getTime();
-    const usersEndTime = usersSchedule.endDateTime.getTime();
+    // const usersStartTime = usersSchedule.startDateTime.getTime();
+    // const usersEndTime = usersSchedule.endDateTime.getTime();
     const currentUserDate = new Date(usersSchedule.startDateTime);
     const reformatUserDate = new Date(
       currentUserDate.getTime() - currentUserDate.getTimezoneOffset() * 60000,
@@ -80,7 +80,7 @@ export class ClimbAvailabilityScheduledService {
       ],
       where: {
         startDateTime: Raw(
-          (incomingDate) => `DATE(${incomingDate}) >= :compDate `,
+          (incomingDate) => `DATE(${incomingDate}) = :compDate `,
           { compDate: reformatUserDate },
         ),
         initialUser: {

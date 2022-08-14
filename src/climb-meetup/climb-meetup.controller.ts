@@ -43,6 +43,7 @@ export class ClimbMeetupController {
     const user = await this.userService.findByEmail(req.user.email, [
       'climbMeetups',
       'climbMeetups.users',
+      'climbMeetups.users.climbingProfile',
       'climbMeetups.climbRequest',
       'climbMeetups.climbRequest.initiatingEntry',
     ]);
