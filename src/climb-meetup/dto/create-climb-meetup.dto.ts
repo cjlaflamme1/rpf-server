@@ -6,4 +6,5 @@ export class CreateClimbMeetupDto {
   climbRequest: ClimbRequest;
   messages?: ClimbMessage[];
   users: User[];
+  climbDate: Date;
 }

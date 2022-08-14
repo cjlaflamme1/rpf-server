@@ -31,7 +31,7 @@ export class ClimbAvailabilityScheduledService {
   //   return `This action returns all climbAvailabilityScheduled`;
   // }
 
-  findOne(id: string) {
+  async findOne(id: string) {
     return this.climbAvailSchedRepository.findOne(id);
   }
 
@@ -72,8 +72,11 @@ export class ClimbAvailabilityScheduledService {
         'initialUser',
         'initialUser.climbingProfile',
         'incomingClimbRequests',
+        'incomingClimbRequests.climbMeetup',
         'incomingClimbRequests.initiatingEntry',
         'climbRequests',
+        'climbRequests.initiatingEntry',
+        'climbRequests.climbMeetup',
       ],
       where: {
         startDateTime: Raw(
@@ -88,23 +91,26 @@ export class ClimbAvailabilityScheduledService {
     });
     if (allDayMatches && allDayMatches.length > 0) {
       allDayMatches.map((dayMatch) => {
-        const dayMatchStartTime = dayMatch.startDateTime.getTime();
-        const startMinusTwoHour = dayMatchStartTime - 7200000;
-        const startPlusTwoHour = dayMatchStartTime + 7200000;
-        const dayMatchEndTime = dayMatch.endDateTime.getTime();
-        const endMinusTwoHour = dayMatchEndTime - 7200000;
-        const endPlusTwoHour = dayMatchEndTime + 7200000;
-        if (
-          startMinusTwoHour <= usersStartTime &&
-          startPlusTwoHour >= usersStartTime
-        ) {
-          returnedMatches.push(dayMatch);
-        } else if (
-          endMinusTwoHour <= usersEndTime &&
-          endPlusTwoHour >= usersEndTime
-        ) {
-          returnedMatches.push(dayMatch);
-        }
+        //  This works, but deactivated for small group testing.
+
+        // const dayMatchStartTime = dayMatch.startDateTime.getTime();
+        // const startMinusTwoHour = dayMatchStartTime - 7200000;
+        // const startPlusTwoHour = dayMatchStartTime + 7200000;
+        // const dayMatchEndTime = dayMatch.endDateTime.getTime();
+        // const endMinusTwoHour = dayMatchEndTime - 7200000;
+        // const endPlusTwoHour = dayMatchEndTime + 7200000;
+        // if (
+        //   startMinusTwoHour <= usersStartTime &&
+        //   startPlusTwoHour >= usersStartTime
+        // ) {
+        //   returnedMatches.push(dayMatch);
+        // } else if (
+        //   endMinusTwoHour <= usersEndTime &&
+        //   endPlusTwoHour >= usersEndTime
+        // ) {
+        //   returnedMatches.push(dayMatch);
+        // }
+        returnedMatches.push(dayMatch);
       });
     }
     const primeUserArea: string[] = usersSchedule.areas

@@ -1,4 +1,4 @@
-import { HttpStatus, Injectable } from '@nestjs/common';
+import { HttpStatus, Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ClimbAvailabilityScheduled } from 'src/climb-availability-scheduled/entities/climb-availability-scheduled.entity';
 import { daysOfWeek } from 'src/models/daysOfWeek';
@@ -58,8 +58,8 @@ export class ClimbAvailabilityGenService {
 
   async findMatches(usersSchedule: ClimbAvailabilityScheduled) {
     const returnedMatches: ClimbAvailabilityGen[] = [];
-    const usersStartTime = usersSchedule.startDateTime.getTime();
-    const usersEndTime = usersSchedule.endDateTime.getTime();
+    // const usersStartTime = usersSchedule.startDateTime.getTime();
+    // const usersEndTime = new Date(usersSchedule.endDateTime).getTime();
     const dayMatches = await this.climbAvailabilityGenRepository.find({
       relations: [
         'user',
@@ -76,38 +76,45 @@ export class ClimbAvailabilityGenService {
       },
     });
     if (dayMatches && dayMatches.length > 0) {
-      const return24Hour = (time: number, amPm: string) => {
-        if (amPm === 'AM') {
-          return time;
-        }
-        if (time > 12) {
-          return time + 12;
-        }
-      };
+      // const return24Hour = (time: number, amPm: string) => {
+      //   if (amPm === 'AM') {
+      //     return time;
+      //   }
+      //   if (time !== 12) {
+      //     return time + 12;
+      //   }
+      // };
       dayMatches.map((dayMatch) => {
-        const dayMatchStartTime = new Date(usersSchedule.startDateTime);
-        const startHour = return24Hour(dayMatch.startHour, dayMatch.startAMPM);
-        dayMatchStartTime.setHours(startHour);
-        dayMatchStartTime.setMinutes(dayMatch.startMinute);
-        const startMinusTwoHour = dayMatchStartTime.getTime() - 7200000;
-        const startPlusTwoHour = dayMatchStartTime.getTime() + 7200000;
-        const dayMatchEndTime = new Date(usersSchedule.endDateTime);
-        const endHour = return24Hour(dayMatch.finishHour, dayMatch.finishAMPM);
-        dayMatchEndTime.setHours(endHour);
-        dayMatchEndTime.setMinutes(dayMatch.finishMinute);
-        const endMinusTwoHour = dayMatchEndTime.getTime() - 7200000;
-        const endPlusTwoHour = dayMatchEndTime.getTime() + 7200000;
-        if (
-          startMinusTwoHour <= usersStartTime &&
-          startPlusTwoHour >= usersStartTime
-        ) {
-          returnedMatches.push(dayMatch);
-        } else if (
-          endMinusTwoHour <= usersEndTime &&
-          endPlusTwoHour >= usersEndTime
-        ) {
-          returnedMatches.push(dayMatch);
-        }
+        returnedMatches.push(dayMatch);
+        // Figure out logic to compare the times
+
+        // const dayMatchStartTime = new Date(usersSchedule.startDateTime);
+        // const startHour = return24Hour(dayMatch.startHour, dayMatch.startAMPM);
+        // dayMatchStartTime.setHours(startHour);
+        // dayMatchStartTime.setMinutes(dayMatch.startMinute);
+        // const startMinusTwoHour = dayMatchStartTime.getTime() - 7200000;
+        // const startPlusTwoHour = dayMatchStartTime.getTime() + 7200000;
+        // const dayMatchEndTime = new Date(usersSchedule.endDateTime);
+        // const endHour = return24Hour(dayMatch.finishHour, dayMatch.finishAMPM);
+        // dayMatchEndTime.setHours(endHour);
+        // dayMatchEndTime.setMinutes(dayMatch.finishMinute);
+        // const endMinusTwoHour = dayMatchEndTime.getTime() - 7200000;
+        // const endPlusTwoHour = dayMatchEndTime.getTime() + 7200000;
+        // this.logger.log(`Users start time: ${new Date(usersStartTime)}`);
+        // this.logger.log(
+        //   `Match minus 2 start time: ${new Date(startMinusTwoHour)}`,
+        // );
+        // if (
+        //   startMinusTwoHour <= usersStartTime &&
+        //   startPlusTwoHour >= usersStartTime
+        // ) {
+        //   returnedMatches.push(dayMatch);
+        // } else if (
+        //   endMinusTwoHour <= usersEndTime &&
+        //   endPlusTwoHour >= usersEndTime
+        // ) {
+        //   returnedMatches.push(dayMatch);
+        // }
       });
     }
     const primeUserArea: string[] = usersSchedule.areas

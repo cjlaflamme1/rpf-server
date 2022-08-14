@@ -34,6 +34,7 @@ export class ClimbMeetupController {
       climbRequest: await this.climbRequestService.findOne(
         createClimbMeetupDto.climbRequestId,
       ),
+      climbDate: createClimbMeetupDto.climbDate,
     });
   }
 
@@ -43,9 +44,17 @@ export class ClimbMeetupController {
       'climbMeetups',
       'climbMeetups.users',
       'climbMeetups.climbRequest',
+      'climbMeetups.climbRequest.initiatingEntry',
     ]);
     if (user.climbMeetups && user.climbMeetups.length > 0) {
-      return user.climbMeetups;
+      const todayMinus2 = new Date();
+      todayMinus2.setDate(todayMinus2.getDate() - 2);
+      const currentOnly = user.climbMeetups.filter(
+        (meet) => meet.climbDate.valueOf() >= todayMinus2.valueOf(),
+      );
+      if (currentOnly && currentOnly.length > 0) {
+        return currentOnly;
+      }
     }
     return [];
   }
@@ -55,7 +64,9 @@ export class ClimbMeetupController {
     const user = await this.userService.findByEmail(req.user.email);
     const requestedMeetup = await this.climbMeetupService.findOne(id, [
       'climbRequest',
+      'climbRequest.initiatingEntry',
       'messages',
+      'messages.user',
       'users',
     ]);
     if (

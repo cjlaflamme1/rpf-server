@@ -20,6 +20,9 @@ export class ClimbMeetup {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
+  @Column()
+  climbDate: Date;
+
   @OneToOne(() => ClimbRequest, (climbRequest) => climbRequest.climbMeetup)
   @JoinColumn()
   climbRequest: ClimbRequest;
