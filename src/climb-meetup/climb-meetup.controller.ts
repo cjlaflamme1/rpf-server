@@ -42,6 +42,8 @@ export class ClimbMeetupController {
   async findAll(@Req() req) {
     const user = await this.userService.findByEmail(req.user.email, [
       'climbMeetups',
+      'climbMeetups.messages',
+      'climbMeetups.messages.user',
       'climbMeetups.users',
       'climbMeetups.users.climbingProfile',
       'climbMeetups.climbRequest',
