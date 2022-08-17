@@ -67,28 +67,34 @@ export class ClimbAvailabilityScheduledService {
     )
       .toISOString()
       .split('T')[0];
-    const allDayMatches = await this.climbAvailSchedRepository.find({
-      relations: [
-        'initialUser',
-        'initialUser.climbingProfile',
-        'incomingClimbRequests',
-        'incomingClimbRequests.climbMeetup',
-        'incomingClimbRequests.initiatingEntry',
-        'climbRequests',
-        'climbRequests.initiatingEntry',
-        'climbRequests.climbMeetup',
-      ],
-      where: {
-        startDateTime: Raw(
-          (incomingDate) => `DATE(${incomingDate}) = :compDate `,
-          { compDate: reformatUserDate },
-        ),
-        initialUser: {
-          id: Not(usersSchedule.initialUser.id),
-          finderVisibility: true,
+    const allDayMatches = await this.climbAvailSchedRepository
+      .find({
+        relations: [
+          'initialUser',
+          'initialUser.climbingProfile',
+          'incomingClimbRequests',
+          'incomingClimbRequests.climbMeetup',
+          'incomingClimbRequests.initiatingEntry',
+          'climbRequests',
+          'climbRequests.initiatingEntry',
+          'climbRequests.climbMeetup',
+        ],
+        where: {
+          startDateTime: Raw(
+            (incomingDate) => `DATE(${incomingDate}) = :compDate `,
+            { compDate: reformatUserDate },
+          ),
+          initialUser: {
+            id: Not(usersSchedule.initialUser.id),
+          },
         },
-      },
-    });
+      })
+      .then((res) =>
+        res.filter(
+          (climbAvail) =>
+            climbAvail.initialUser && climbAvail.initialUser.finderVisibility,
+        ),
+      );
     if (allDayMatches && allDayMatches.length > 0) {
       allDayMatches.map((dayMatch) => {
         //  This works, but deactivated for small group testing.
