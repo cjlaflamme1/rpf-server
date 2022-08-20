@@ -56,7 +56,8 @@ export class ClimbRequestService {
       const receiptRes = await this.expo.sendPushNotificationsAsync([
         {
           to: newRequest.targetUser.expoPushToken,
-          body: 'You have a new Climb Request.',
+          title: 'New Climb Request',
+          body: `You have a new Climb Request from ${newRequest.initiatingUser.firstName}`,
           sound: 'default',
         },
       ]);
