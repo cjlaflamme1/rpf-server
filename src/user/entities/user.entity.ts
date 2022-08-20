@@ -35,6 +35,11 @@ export class User {
   email: string;
 
   @Column({
+    nullable: true,
+  })
+  expoPushToken: string;
+
+  @Column({
     select: false,
   })
   password: string;
