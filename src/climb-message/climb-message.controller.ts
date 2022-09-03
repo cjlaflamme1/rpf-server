@@ -32,6 +32,7 @@ export class ClimbMessageController {
       user: await this.userService.findByEmail(req.user.email),
       climbMeetup: await this.climbMeetupService.findOne(
         createClimbMessageDto.climbMeetupId,
+        ['users'],
       ),
     });
   }
