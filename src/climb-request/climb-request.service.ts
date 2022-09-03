@@ -4,6 +4,7 @@ import { Repository } from 'typeorm';
 import { CreateClimbRequestDto } from './dto/create-climb-request.dto';
 import { UpdateClimbRequestDto } from './dto/update-climb-request.dto';
 import { ClimbRequest } from './entities/climb-request.entity';
+import { Expo } from 'expo-server-sdk';
 
 @Injectable()
 export class ClimbRequestService {
@@ -12,6 +13,7 @@ export class ClimbRequestService {
     private climbRequestRepository: Repository<ClimbRequest>,
   ) {}
   logger = new Logger(ClimbRequestService.name);
+  expo = new Expo();
   async create(createClimbRequestDto: CreateClimbRequestDto) {
     if (createClimbRequestDto.targetScheduledRequest) {
       const existingReq = await this.climbRequestRepository.find({
@@ -43,7 +45,25 @@ export class ClimbRequestService {
         }
       }
     }
-    return this.climbRequestRepository.save(createClimbRequestDto);
+    const newRequest = await this.climbRequestRepository.save(
+      createClimbRequestDto,
+    );
+    if (
+      newRequest &&
+      newRequest.targetUser &&
+      newRequest.targetUser.expoPushToken
+    ) {
+      const receiptRes = await this.expo.sendPushNotificationsAsync([
+        {
+          to: newRequest.targetUser.expoPushToken,
+          title: 'New Climb Request',
+          body: `You have a new Climb Request from ${newRequest.initiatingUser.firstName}`,
+          sound: 'default',
+        },
+      ]);
+      this.logger.log(JSON.stringify(receiptRes));
+    }
+    return newRequest;
   }
 
   // findAll() {

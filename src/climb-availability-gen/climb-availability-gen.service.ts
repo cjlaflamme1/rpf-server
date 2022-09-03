@@ -60,21 +60,26 @@ export class ClimbAvailabilityGenService {
     const returnedMatches: ClimbAvailabilityGen[] = [];
     // const usersStartTime = usersSchedule.startDateTime.getTime();
     // const usersEndTime = new Date(usersSchedule.endDateTime).getTime();
-    const dayMatches = await this.climbAvailabilityGenRepository.find({
-      relations: [
-        'user',
-        'user.climbingProfile',
-        'incomingClimbRequests',
-        'incomingClimbRequests.initiatingEntry',
-      ],
-      where: {
-        day: daysOfWeek[new Date(usersSchedule.startDateTime).getDay()],
-        user: {
-          id: Not(usersSchedule.initialUser.id),
-          finderVisibility: true,
+    const dayMatches = await this.climbAvailabilityGenRepository
+      .find({
+        relations: [
+          'user',
+          'user.climbingProfile',
+          'incomingClimbRequests',
+          'incomingClimbRequests.initiatingEntry',
+        ],
+        where: {
+          day: daysOfWeek[new Date(usersSchedule.startDateTime).getDay()],
+          user: {
+            id: Not(usersSchedule.initialUser.id),
+          },
         },
-      },
-    });
+      })
+      .then((res) =>
+        res.filter(
+          (climbAvail) => climbAvail.user && climbAvail.user.finderVisibility,
+        ),
+      );
     if (dayMatches && dayMatches.length > 0) {
       // const return24Hour = (time: number, amPm: string) => {
       //   if (amPm === 'AM') {

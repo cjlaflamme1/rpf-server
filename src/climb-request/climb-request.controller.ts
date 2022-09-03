@@ -43,6 +43,7 @@ export class ClimbRequestController {
   ) {
     const user = await this.userService.findByEmail(req.user.email);
     const createClimbRequestDto: CreateClimbRequestDto = {
+      initialMessage: incomingDto.initialMessage,
       initiatingEntry: await this.climbAvailSchedService.findOne(
         incomingDto.initiatingEntryId,
       ),
@@ -72,7 +73,11 @@ export class ClimbRequestController {
       'receivedClimbRequests.initiatingEntry',
     ]);
     if (user.receivedClimbRequests && user.receivedClimbRequests.length > 0) {
-      return user.receivedClimbRequests;
+      const currentRequests = user.receivedClimbRequests.filter(
+        (req) =>
+          req.initiatingEntry.startDateTime.valueOf() >= new Date().valueOf(),
+      );
+      return currentRequests || [];
     }
     return [];
   }
