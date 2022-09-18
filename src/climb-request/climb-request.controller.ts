@@ -75,6 +75,7 @@ export class ClimbRequestController {
     if (user.receivedClimbRequests && user.receivedClimbRequests.length > 0) {
       const currentRequests = user.receivedClimbRequests.filter(
         (req) =>
+          req.initiatingEntry &&
           req.initiatingEntry.startDateTime.valueOf() >= new Date().valueOf(),
       );
       return currentRequests || [];
