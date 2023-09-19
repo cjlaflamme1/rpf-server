@@ -1,5 +1,6 @@
 import { ClimbAvailabilityGen } from 'src/climb-availability-gen/entities/climb-availability-gen.entity';
 import { ClimbAvailabilityScheduled } from 'src/climb-availability-scheduled/entities/climb-availability-scheduled.entity';
+import { ClimbMeetup } from 'src/climb-meetup/entities/climb-meetup.entity';
 import { ClimbRequest } from 'src/climb-request/entities/climb-request.entity';
 import { ClimberProfile } from 'src/climber-profile/entities/climber-profile.entity';
 import {
@@ -14,6 +15,7 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
   JoinColumn,
+  JoinTable,
 } from 'typeorm';
 
 @Entity()
@@ -31,6 +33,11 @@ export class User {
     unique: true,
   })
   email: string;
+
+  @Column({
+    nullable: true,
+  })
+  expoPushToken: string;
 
   @Column({
     select: false,
@@ -78,6 +85,10 @@ export class User {
 
   @OneToMany(() => ClimbRequest, (climbRequest) => climbRequest.targetUser)
   receivedClimbRequests: ClimbRequest[];
+
+  @ManyToMany(() => ClimbMeetup, (climbMeetup) => climbMeetup.users)
+  @JoinTable()
+  climbMeetups: ClimbMeetup[];
 
   @CreateDateColumn()
   createdAt: Date;

@@ -56,20 +56,29 @@ export class ClimbAvailabilityScheduledController {
       user.climbAvailabilityScheduled &&
       user.climbAvailabilityScheduled.length > 0
     ) {
-      return await Promise.all(
-        user.climbAvailabilityScheduled.map(async (userSchedule) => ({
-          ...userSchedule,
-          matches:
-            await this.climbAvailabilityScheduledService.findSchedMatches(
+      const todayMinus2 = new Date();
+      todayMinus2.setDate(todayMinus2.getDate() - 2);
+      const currentOnly = user.climbAvailabilityScheduled.filter(
+        (sched) => sched.startDateTime.valueOf() >= todayMinus2.valueOf(),
+      );
+      if (currentOnly && currentOnly.length > 0) {
+        return await Promise.all(
+          currentOnly.map(async (userSchedule) => ({
+            ...userSchedule,
+            matches:
+              await this.climbAvailabilityScheduledService.findSchedMatches(
+                userSchedule,
+              ),
+            genMatches: await this.climbAvailGenService.findMatches(
               userSchedule,
             ),
-          genMatches: await this.climbAvailGenService.findMatches(userSchedule),
-          initialUser: {
-            ...userSchedule.initialUser,
-            password: null,
-          },
-        })),
-      );
+            initialUser: {
+              ...userSchedule.initialUser,
+              password: null,
+            },
+          })),
+        );
+      }
     }
     return [];
   }

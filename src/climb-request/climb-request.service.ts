@@ -1,9 +1,10 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CreateClimbRequestDto } from './dto/create-climb-request.dto';
 import { UpdateClimbRequestDto } from './dto/update-climb-request.dto';
 import { ClimbRequest } from './entities/climb-request.entity';
+import { Expo } from 'expo-server-sdk';
 
 @Injectable()
 export class ClimbRequestService {
@@ -11,6 +12,8 @@ export class ClimbRequestService {
     @InjectRepository(ClimbRequest)
     private climbRequestRepository: Repository<ClimbRequest>,
   ) {}
+  logger = new Logger(ClimbRequestService.name);
+  expo = new Expo();
   async create(createClimbRequestDto: CreateClimbRequestDto) {
     if (createClimbRequestDto.targetScheduledRequest) {
       const existingReq = await this.climbRequestRepository.find({
@@ -19,7 +22,7 @@ export class ClimbRequestService {
           targetScheduledRequest: createClimbRequestDto.targetScheduledRequest,
         },
       });
-      if (existingReq) {
+      if (existingReq && existingReq.length > 0) {
         throw new HttpException(
           'This match request already exists.',
           HttpStatus.CONFLICT,
@@ -34,7 +37,7 @@ export class ClimbRequestService {
             targetGenRequest: createClimbRequestDto.targetGenRequest,
           },
         });
-        if (existingReq) {
+        if (existingReq && existingReq.length > 0) {
           throw new HttpException(
             'This match request already exists.',
             HttpStatus.CONFLICT,
@@ -42,7 +45,25 @@ export class ClimbRequestService {
         }
       }
     }
-    return this.climbRequestRepository.save(createClimbRequestDto);
+    const newRequest = await this.climbRequestRepository.save(
+      createClimbRequestDto,
+    );
+    if (
+      newRequest &&
+      newRequest.targetUser &&
+      newRequest.targetUser.expoPushToken
+    ) {
+      const receiptRes = await this.expo.sendPushNotificationsAsync([
+        {
+          to: newRequest.targetUser.expoPushToken,
+          title: 'New Climb Request',
+          body: `You have a new Climb Request from ${newRequest.initiatingUser.firstName}`,
+          sound: 'default',
+        },
+      ]);
+      this.logger.log(JSON.stringify(receiptRes));
+    }
+    return newRequest;
   }
 
   // findAll() {

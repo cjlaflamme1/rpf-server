@@ -34,6 +34,7 @@ export class S3Service {
       }).catch((e) => this.logger.log(e));
       return signedUrl;
     } catch (e) {
+      this.logger.log(e);
       return e;
     }
   };

@@ -30,10 +30,10 @@ export class UserController {
     return this.userService.findByEmail(req.user.email, ['climbingProfile']);
   }
 
-  // @Get(':id')
-  // findOne(@Param('id') id: string) {
-  //   return this.userService.findOne(id);
-  // }
+  @Get(':id')
+  findOne(@Param('id') id: string) {
+    return this.userService.findOne(id, ['climbingProfile']);
+  }
 
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {

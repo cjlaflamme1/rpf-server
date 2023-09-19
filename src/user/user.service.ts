@@ -76,8 +76,23 @@ export class UserService {
     return null;
   }
 
-  findOne(id: string, relations: string[] = []) {
-    return this.usersRepository.findOne(id, { relations });
+  async findOne(id: string, relations: string[] = []) {
+    const incomingUser = await this.usersRepository.findOne(id, { relations });
+    if (incomingUser) {
+      let imageGetURL = '';
+      if (incomingUser.profilePhoto) {
+        imageGetURL = await this.s3Service.getImageObjectSignedUrl(
+          incomingUser.profilePhoto,
+        );
+      }
+      incomingUser.password = null;
+      return { ...incomingUser, imageGetURL };
+    }
+    return null;
+  }
+
+  findByIds(ids: string[], relations: string[] = []) {
+    return this.usersRepository.findByIds(ids, { relations });
   }
 
   async update(id: string, updateUserDto: UpdateUserDto) {

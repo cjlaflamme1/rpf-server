@@ -61,7 +61,7 @@ npm install
 #cp -n /var/www/api/.env.example /var/www/api/.env
 
 # Create a MySql docker container w/ a persistent volume that restarts with the VM automatically
-sudo docker run --name api -p 3306:3306 -d --restart always -e MYSQL_ALLOW_EMPTY_PASSWORD=true -e MYSQL_DATABASE=rpf_local -v ~/home/docker/mysql-data:/var/lib/mysql mysql:8.0
+sudo docker run --name api -p 3306:3306 -d --restart always -e MYSQL_ALLOW_EMPTY_PASSWORD=true -e MYSQL_DATABASE=nhcpf -v ~/home/docker/mysql-data:/var/lib/mysql mysql:8.0
 
 # Wait for mysqld to initialize
 while ! mysqladmin -u root -h 0.0.0.0 ping --silent ; do

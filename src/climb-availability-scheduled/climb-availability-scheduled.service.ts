@@ -31,7 +31,7 @@ export class ClimbAvailabilityScheduledService {
   //   return `This action returns all climbAvailabilityScheduled`;
   // }
 
-  findOne(id: string) {
+  async findOne(id: string) {
     return this.climbAvailSchedRepository.findOne(id);
   }
 
@@ -59,52 +59,64 @@ export class ClimbAvailabilityScheduledService {
   }
   async findSchedMatches(usersSchedule: ClimbAvailabilityScheduled) {
     const returnedMatches: ClimbAvailabilityScheduled[] = [];
-    const usersStartTime = usersSchedule.startDateTime.getTime();
-    const usersEndTime = usersSchedule.endDateTime.getTime();
+    // const usersStartTime = usersSchedule.startDateTime.getTime();
+    // const usersEndTime = usersSchedule.endDateTime.getTime();
     const currentUserDate = new Date(usersSchedule.startDateTime);
     const reformatUserDate = new Date(
       currentUserDate.getTime() - currentUserDate.getTimezoneOffset() * 60000,
     )
       .toISOString()
       .split('T')[0];
-    const allDayMatches = await this.climbAvailSchedRepository.find({
-      relations: [
-        'initialUser',
-        'initialUser.climbingProfile',
-        'incomingClimbRequests',
-        'incomingClimbRequests.initiatingEntry',
-        'climbRequests',
-      ],
-      where: {
-        startDateTime: Raw(
-          (incomingDate) => `DATE(${incomingDate}) >= :compDate `,
-          { compDate: reformatUserDate },
-        ),
-        initialUser: {
-          id: Not(usersSchedule.initialUser.id),
-          finderVisibility: true,
+    const allDayMatches = await this.climbAvailSchedRepository
+      .find({
+        relations: [
+          'initialUser',
+          'initialUser.climbingProfile',
+          'incomingClimbRequests',
+          'incomingClimbRequests.climbMeetup',
+          'incomingClimbRequests.initiatingEntry',
+          'climbRequests',
+          'climbRequests.initiatingEntry',
+          'climbRequests.climbMeetup',
+        ],
+        where: {
+          startDateTime: Raw(
+            (incomingDate) => `DATE(${incomingDate}) = :compDate `,
+            { compDate: reformatUserDate },
+          ),
+          initialUser: {
+            id: Not(usersSchedule.initialUser.id),
+          },
         },
-      },
-    });
+      })
+      .then((res) =>
+        res.filter(
+          (climbAvail) =>
+            climbAvail.initialUser && climbAvail.initialUser.finderVisibility,
+        ),
+      );
     if (allDayMatches && allDayMatches.length > 0) {
       allDayMatches.map((dayMatch) => {
-        const dayMatchStartTime = dayMatch.startDateTime.getTime();
-        const startMinusTwoHour = dayMatchStartTime - 7200000;
-        const startPlusTwoHour = dayMatchStartTime + 7200000;
-        const dayMatchEndTime = dayMatch.endDateTime.getTime();
-        const endMinusTwoHour = dayMatchEndTime - 7200000;
-        const endPlusTwoHour = dayMatchEndTime + 7200000;
-        if (
-          startMinusTwoHour <= usersStartTime &&
-          startPlusTwoHour >= usersStartTime
-        ) {
-          returnedMatches.push(dayMatch);
-        } else if (
-          endMinusTwoHour <= usersEndTime &&
-          endPlusTwoHour >= usersEndTime
-        ) {
-          returnedMatches.push(dayMatch);
-        }
+        //  This works, but deactivated for small group testing.
+
+        // const dayMatchStartTime = dayMatch.startDateTime.getTime();
+        // const startMinusTwoHour = dayMatchStartTime - 7200000;
+        // const startPlusTwoHour = dayMatchStartTime + 7200000;
+        // const dayMatchEndTime = dayMatch.endDateTime.getTime();
+        // const endMinusTwoHour = dayMatchEndTime - 7200000;
+        // const endPlusTwoHour = dayMatchEndTime + 7200000;
+        // if (
+        //   startMinusTwoHour <= usersStartTime &&
+        //   startPlusTwoHour >= usersStartTime
+        // ) {
+        //   returnedMatches.push(dayMatch);
+        // } else if (
+        //   endMinusTwoHour <= usersEndTime &&
+        //   endPlusTwoHour >= usersEndTime
+        // ) {
+        //   returnedMatches.push(dayMatch);
+        // }
+        returnedMatches.push(dayMatch);
       });
     }
     const primeUserArea: string[] = usersSchedule.areas
